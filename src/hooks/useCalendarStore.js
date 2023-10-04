@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { onAddNewEvent, onSetActiveEvent } from '../store';
+import { onAddNewEvent, onSetActiveEvent, onUpdateEvent } from '../store';
 
 export const useCalendarStore = () => {
     const { events, activeEvent } = useSelector( state => state.calendar );
@@ -12,9 +12,10 @@ export const useCalendarStore = () => {
     const startSavingEvent = async( calendarEvent ) => {
         // hacer llamado al backend
 
-        // si todo sale bien
         if ( calendarEvent._id ) {
             // Si tiene un id, significa que estoy actualizando
+            // dispatch( onUpdateEvent(calendarEvent) );
+            dispatch( onUpdateEvent({ ...calendarEvent }) ); // o hacer esto para mandar un nuevo obj
         } else {
             // si no, estoy creando
             dispatch( onAddNewEvent({ ...calendarEvent, _id: new Date().getTime() }) );

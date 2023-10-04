@@ -84,7 +84,6 @@ export const CalendarModal = () => {
 
     console.log({formValues});
 
-    // ToDos:
     await startSavingEvent( formValues );
     closeDateModal();
     setFormSubmitted(false);
@@ -115,7 +114,6 @@ export const CalendarModal = () => {
               timeCaption="Hora"
             />
           </div>
-          {/* <input className="form-control" placeholder="Fecha inicio" /> */}
         </div>
 
         <div className="form-group mb-2">
@@ -132,7 +130,6 @@ export const CalendarModal = () => {
               timeCaption="Hora"
             />
           </div>
-          {/* <input className="form-control" placeholder="Fecha inicio" /> */}
         </div>
 
         <hr />
