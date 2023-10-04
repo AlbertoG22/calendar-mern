@@ -25,7 +25,7 @@ Modal.setAppElement("#root");
 
 export const CalendarModal = () => {
   const { isDateModalOpen, closeDateModal } = useUiStore();
-  const { activeEvent } = useCalendarStore();
+  const { activeEvent, startSavingEvent } = useCalendarStore();
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formValues, setFormValues] = useState({
@@ -39,8 +39,8 @@ export const CalendarModal = () => {
     if ( !formSubmitted ) return '';
 
     return ( formValues.title.length > 0 )
-        ? 'is-valid'
-        : 'is-invalid';
+      ? 'is-valid'
+      : 'is-invalid';
 
   }, [formValues.title, formSubmitted]);
 
@@ -53,15 +53,15 @@ export const CalendarModal = () => {
 
   const onInputChange = ({ target }) => {
     setFormValues({
-        ...formValues,
-        [target.name]: target.value
+      ...formValues,
+      [target.name]: target.value
     });
   };
 
   const onDateChanged = ( event, changing ) => {
     setFormValues({
-        ...formValues,
-        [changing]: event
+      ...formValues,
+      [changing]: event
     });
   };
 
@@ -70,23 +70,24 @@ export const CalendarModal = () => {
     closeDateModal();
   };
 
-  const onSubmit = ( event ) => {
+  const onSubmit = async( event ) => {
     event.preventDefault();
     setFormSubmitted(true);
 
     const difference = differenceInSeconds( formValues.end, formValues.start );
     if ( isNaN(difference) || difference <= 0) {
-        Swal.fire('Fechas incorrectas', 'Revisar las fechas ingresadas', 'error');
-        return;
+      Swal.fire('Fechas incorrectas', 'Revisar las fechas ingresadas', 'error');
+      return;
     }
 
     if ( formValues.title.length <= 0 ) return;
 
     console.log({formValues});
 
-    // ToDos: 
-    // cerrar modal
-    // remover errores en pantalla
+    // ToDos:
+    await startSavingEvent( formValues );
+    closeDateModal();
+    setFormSubmitted(false);
   };
 
   return (
@@ -105,13 +106,13 @@ export const CalendarModal = () => {
           <label>Fecha y hora inicio</label>
           <div>
             <DatePicker
-                selected={ formValues.start }
-                onChange={ (event) => onDateChanged(event, 'start') }
-                className="form-control"
-                dateFormat="Pp"
-                showTimeSelect
-                locale="es"
-                timeCaption="Hora"
+              selected={ formValues.start }
+              onChange={ (event) => onDateChanged(event, 'start') }
+              className="form-control"
+              dateFormat="Pp"
+              showTimeSelect
+              locale="es"
+              timeCaption="Hora"
             />
           </div>
           {/* <input className="form-control" placeholder="Fecha inicio" /> */}
@@ -121,14 +122,14 @@ export const CalendarModal = () => {
           <label>Fecha y hora fin</label>
           <div>
             <DatePicker
-                minDate={ formValues.start }
-                selected={ formValues.end }
-                onChange={ (event) => onDateChanged(event, 'end') }
-                className="form-control"
-                dateFormat="Pp"
-                showTimeSelect
-                locale="es"
-                timeCaption="Hora"
+              minDate={ formValues.start }
+              selected={ formValues.end }
+              onChange={ (event) => onDateChanged(event, 'end') }
+              className="form-control"
+              dateFormat="Pp"
+              showTimeSelect
+              locale="es"
+              timeCaption="Hora"
             />
           </div>
           {/* <input className="form-control" placeholder="Fecha inicio" /> */}
