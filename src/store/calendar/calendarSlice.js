@@ -1,25 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { addHours } from 'date-fns';
+// import { addHours } from 'date-fns';
 
-
-const tempEvent = {
-    _id: new Date().getTime(),
-    title: 'Cumpleaños del jefe',
-    notes: 'Comprar el pastel',
-    start: new Date(),
-    end: addHours( new Date(), 2 ),
-    bgColor: '#fafafa',
-    user: {
-      _id: 123,
-      name: 'Alberto'
-    },
-};
+// const tempEvent = {
+//     _id: new Date().getTime(),
+//     title: 'Cumpleaños del jefe',
+//     notes: 'Comprar el pastel',
+//     start: new Date(),
+//     end: addHours( new Date(), 2 ),
+//     bgColor: '#fafafa',
+//     user: {
+//       _id: 123,
+//       name: 'Alberto'
+//     },
+// };
 
 export const calendarSlice = createSlice({
     name: 'calendar',
     initialState: {
+        isLoadingEvents: true,
         events: [
-            tempEvent
+            // tempEvent
         ],
         activeEvent: null,
     },
@@ -27,12 +27,10 @@ export const calendarSlice = createSlice({
         onSetActiveEvent: ( state, { payload } ) => {
             state.activeEvent = payload;
         },
-
         onAddNewEvent: ( state, { payload } ) => {
             state.events.push(payload);
             state.activeEvent = null;
         },
-
         onUpdateEvent: ( state, { payload }) => {
             state.events = state.events.map( (event) => {
                 if ( event._id === payload._id ) {
@@ -41,16 +39,24 @@ export const calendarSlice = createSlice({
                 return event;
             });
         },
-
         onDeleteEvent: ( state ) => {
             if ( state.activeEvent ) {
                 state.events = state.events.filter( event => event._id !== state.activeEvent._id );
                 state.activeEvent = null;
             }
         },
+        onLoadEvents: ( state, { payload = [] } ) => {
+            state.isLoadingEvents = false;
+            payload.forEach( event => {
+                const exists = state.events.some( dbEvent => dbEvent.id === event.id );
+                if ( !exists ) {
+                    state.events.push( event );
+                }
+            });
+        },
     }
 });
 
 
 // Action creators are generated for each case reducer function
-export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent, onDeleteEvent } = calendarSlice.actions;
+export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent, onDeleteEvent, onLoadEvents } = calendarSlice.actions;
